@@ -58,6 +58,8 @@ app.post("/dialogflowWebhook", async (req, res) => {
   intentMap.set("reactTutorial-intent - name", userOnboardingHandler);
 
   agent.handleRequest(intentMap);
+
+  return res.send("name added to database");
 });
 
 exports.app = functions.https.onRequest(app);

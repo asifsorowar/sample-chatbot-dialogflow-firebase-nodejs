@@ -32,7 +32,7 @@ app.post("/dialogflowGateway", async (req, res) => {
 });
 
 app.post("/dialogflowWebhook", async (req, res) => {
-  const agent = new WebhookClient({ req, res });
+  const agent = new WebhookClient({ request: req, response: res });
 
   function welcome(agent) {
     agent.add(`Welcome to my agent!`);
@@ -45,7 +45,7 @@ app.post("/dialogflowWebhook", async (req, res) => {
 
   async function userOnboardingHandler(agent) {
     const db = admin.firestore();
-    const { name } = req.params;
+    const { name } = agent.parameters;
 
     await db.collection("users").add({
       name,
@@ -55,7 +55,9 @@ app.post("/dialogflowWebhook", async (req, res) => {
   let intentMap = new Map();
   intentMap.set("Default Welcome Intent", welcome);
   intentMap.set("Default Fallback Intent", fallback);
-  intentMap.set("userOnboardingHandler", userOnboardingHandler);
+  intentMap.set("reactTutorial-intent - name", userOnboardingHandler);
+
+  agent.handleRequest(intentMap);
 });
 
 exports.app = functions.https.onRequest(app);
